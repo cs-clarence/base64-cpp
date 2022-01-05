@@ -19,7 +19,9 @@ namespace base64
     else return (bytemask & byte) << std::abs(byteshift);
   }
 
-  std::string encode(const std::vector<uint8_t> &bytes)
+  template<class TChar = char>
+  std::enable_if_t<std::is_integral_v<TChar>, std::basic_string<TChar>>
+  encode(const std::vector<uint8_t> &bytes)
   {
     constexpr uint8_t __bytemasks[] {
       0b11111100u, // 1st b64 from 1st byte
@@ -32,7 +34,7 @@ namespace base64
 
     constexpr int8_t __byteshifts[] {2, -4, 4, -2, 6, 0};
 
-    std::string buffer;
+    std::basic_string<TChar> buffer;
 
     uint8_t temp = 0;
     for (uint64_t i = 0, end = bytes.size(); i < end; ++i)
@@ -82,7 +84,9 @@ namespace base64
     return buffer;
   }
 
-  std::vector<uint8_t> decode(const std::string &b64string)
+  template<class TChar = char>
+  std::enable_if_t<std::is_integral_v<TChar>, std::vector<uint8_t>>
+  decode(const std::basic_string<TChar> &b64string)
   {
     static std::unordered_map<char, uint8_t> char_table;
     static bool map_initialized = false;
